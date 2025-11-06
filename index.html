@@ -1026,7 +1026,7 @@
       <a href="https://github.com/rodriguessoaresarthurmiguel-lgtm" target="_blank" rel="noopener">Arthur — @rodriguessoaresarthurmiguel-lgtm</a>
     </div>
 
-    <div class="row" style="margin-top:25px;">
+    <div class="row" style="margin-top:2    5px;">
       <button onclick="showScreen('menu')">VOLTAR</button>
     </div>
   </div>
@@ -1057,8 +1057,28 @@
 
 
   <div id="hud-username" style="position: absolute; top: 15px; right: 20px; color: black; font-weight: bold; font-size: 30px; z-index: 10; display: none;"></div>
-  <img id="boom" src="https://uploads.onecompiler.io/43rztn6g5/43unkwz55/Score14.png" alt="Boom Explosion" />
+  <img id="boom" src="https://uploads.onecompiler.io/43tk45a7t/443unzag4/Score-removebg-preview.png" alt="Boom Explosion" />
   <script>
+    
+    //Aqui Easter Egg: digitar "NOTE" pra ativar destruição
+    let secretBuffer = "";
+    document.addEventListener("keydown", (e) => {
+      // só funciona se o jogo estiver ativo
+      if (!document.getElementById("jogo").classList.contains("active")) return;
+    
+      // acumula letras
+      secretBuffer += e.key.toLowerCase();
+    
+      // se terminar com "note" -> ativa
+      if (secretBuffer.endsWith("note")) {
+        clearAllPieces();
+        secretBuffer = "";
+      }
+    
+      // limita tamanho do buffer pra não crescer demais
+      if (secretBuffer.length > 10) secretBuffer = secretBuffer.slice(-4);
+    });
+    
     let isPaused = false; // Variável global que controla se o jogo está pausado
     let timerInterval;
     let startTime;
@@ -1963,6 +1983,38 @@
         }
       }
     });
+    
+    // Ester Egg Notificação
+    function clearAllPieces() {
+      const boom = document.getElementById("boom");
+    
+      // posiciona o boom no centro da tela apenas durante o easter egg
+      boom.style.top = "50%";
+      boom.style.left = "50%";
+      boom.style.transform = "translate(-50%, -50%) scale(0)";
+    
+      // dispara a animação de explosão
+      boom.classList.remove("boom-active");
+      void boom.offsetWidth; // força reflow
+      boom.classList.add("boom-active");
+    
+      // após a animação, limpa o tabuleiro
+      setTimeout(() => {
+        if (!game) return;
+        for (let r = 0; r < game.grid.length; r++) {
+          game.grid[r].fill(0);
+        }
+        game.drawAll();
+        showNotification("💣 VOCÊ INVOCOU O PODER DO NOTE! 💣");
+    
+        // volta o boom para a posição original (canto)
+        setTimeout(() => {
+          boom.style.top = "83%";
+          boom.style.left = "87%";
+          boom.style.transform = "translate(-50%, -50%) scale(0)";
+        }, 1500);
+      }, 800);
+    }
   </script>
   </body>
 
