@@ -1050,7 +1050,7 @@
 
   <div id="insane-screen" class="screen">
     <div class="insane-box">
-      <p>YOU IS INSANE</p>
+      <p>YOU ARE INSANE</p>
       <button id="btn-return">CONTINUAR JOGO</button>
     </div>
   </div>
@@ -1212,28 +1212,36 @@
       pauseMusic();
     });
 
-    // Botão de retorno da tela INSANE
+      // Botão de retorno da tela INSANE
+      // Botão de retorno da tela INSANE (corrigido)
     document.getElementById("btn-return").addEventListener("click", () => {
       if (game) {
-        showScreen("jogo"); // ativa a tela do jogo
+        // volta pra tela do jogo
+        showScreen("jogo");
+        
+        // remove flags de pausa/game over
         game.paused = false;
-        game.gameOver = false; // desbloqueia game over
-        game.lastTime = 0;
-
-        // redesenha imediatamente
+        game.gameOver = false;
+    
+        // redesenha o estado atual do tabuleiro
         game.drawAll();
-
-        // retoma loop
-        game.loopId = requestAnimationFrame(game.update.bind(game));
-
-        // reativa controles
+    
+        // reanexa o controle de teclado
         document.addEventListener("keydown", game.handleKeyDown);
-
-        // retoma cronômetro
+    
+        // retoma o loop de atualização sem reiniciar o jogo
+        cancelAnimationFrame(game.loopId);
+        game.lastTime = performance.now();
+        game.loopId = requestAnimationFrame(game.update.bind(game));
+    
+        // retoma o cronômetro
         startTimer();
-
-        // retoma música
+    
+        // toca a música novamente
         playMusic();
+    
+        // mensagem rápida opcional
+        showNotification("Em breve...", 2000);
       }
     });
 
@@ -1794,7 +1802,7 @@
           // ======= CHECAGEM INSANE =======
           const elapsed = elapsedBeforePause + (Date.now() - startTime);
           const minutes = Math.floor(elapsed / 60000);
-          if (this.score >= 200000 || minutes >= 40) {
+          if (this.score >= 40000 || minutes >= 30) {
             cancelAnimationFrame(this.loopId);
             document.removeEventListener("keydown", this.handleKeyDown);
             stopTimer(); // pausa o cronômetro
